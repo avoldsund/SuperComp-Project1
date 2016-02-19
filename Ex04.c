@@ -3,7 +3,7 @@
 #include <math.h>
 #include "mpi.h"
 #include <omp.h>
-
+ 
 void compute_v(int n, double *v) {
 	int i;
 	
@@ -28,14 +28,6 @@ double compute_error(double S_n) {
 
 	double S = ( M_PI * M_PI )/6;
 	return fabs(S - S_n);
-}
-
-void print_vec(int n, double *vec) {
-	
-	int i;
-	for ( i = 0; i < n; i++ ) {
-		printf("err[k = %d] = %f\n", i+3, vec[i]);
-	}
 }
 
 
@@ -79,9 +71,9 @@ int main(int argc, char ** argv) {
 		double S_n = compute_S(np, v);
 		MPI_Reduce(&S_n, &S, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 		
-		printf("S = %f\n", S);
+		printf("S = %1.16f\n", S);
 		double err = compute_error(S);
-		printf("Error = %f\n", err);
+		printf("Error = %1.16f\n", err);
 
 		//int n_check = (P)*np + n%P;
 
