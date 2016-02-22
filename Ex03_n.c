@@ -6,8 +6,8 @@
 void compute_v(int n, double *v) {
 	int i;
 	
-	for ( i = 0; i < n; i++ ) {
-		v[i] = 1/(double)( (i+1)*(i+1) );
+	for ( i = 1; i < n+1; i++ ) {
+		v[i-1] = 1/(double)( i*i );
 	}
 }
 
@@ -31,7 +31,8 @@ void print_vec(int n, double *vec, double *vec2) {
 	
 	int i;
 	for ( i = 0; i < n; i++ ) {
-		printf("k = %d \t S = %f \t Error = %f\n", i+3, vec[i], vec2[i]);
+		printf("k = %d \t S = %1.16f \t Error = %1.16f\n", i+3, vec[i], vec2[i]);
+		//printf("k = %d \t Error = %1.16f\n", i+3, vec2[i]);
 	}
 }
 
@@ -44,11 +45,10 @@ int main(int argc, char ** argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &P); // size = number of processes nprocs
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Numbering of process
 
-	if (argc < 1) {
+	if (argc > 1) {
 		// Only one process needs to print usage output
 		if (rank == 0) {
-			printf("Usage: ex3 k, n=pow(2,k)\n");
-			printf("n = vector/matrix size\n");
+			printf("No argument needed\n");
 		}
 		MPI_Finalize ();
 		return 1;
@@ -72,6 +72,11 @@ int main(int argc, char ** argv) {
 		int i;	
 
 		if ( rank == 0 ) {
+
+			FILE *f;
+			f = fopen("Error_Ex03.txt", "w");
+			fprintf(f, "Error Ex03, P = %d\n", P);
+			
 			v = calloc(n, sizeof(double));
 			compute_v(n, v);
 			
@@ -89,8 +94,13 @@ int main(int argc, char ** argv) {
 
 			if (k == k_max-1) {
 				print_vec(k_max-k_min, S_vec, err_vec);
+				for ( i = 0; i < k_max-k_min; i++ ) {
+					fprintf(f, "%1.16f\n", err_vec[i]);
+				}
 			}
 			//int n_check = (P)*np + n%P;
+			free(v);
+			fclose(f);
 
 		}
 		else {
@@ -106,8 +116,10 @@ int main(int argc, char ** argv) {
 			}
 			MPI_Recv(v_n, np, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
 
-
 			double S_n = compute_S(np, v_n);
+
+			//free(v_n);
+
 			MPI_Reduce(&S_n, &S, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 		}
 

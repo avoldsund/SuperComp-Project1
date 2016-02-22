@@ -6,8 +6,8 @@
 void compute_v(int n, double *v) {
 	int i;
 	
-	for ( i = 0; i < n; i++ ) {
-		v[i] = 1/(double)( (i+1)*(i+1) );
+	for ( i = 1; i < n+1; i++ ) {
+		v[i] = 1/(double)( i*i );
 	}
 }
 

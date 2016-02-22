@@ -7,7 +7,7 @@ void compute_v(int n, double *v) {
 	
 	for ( i = 0; i < n; i++ ) {
 		
-		v[i] = 1/(double)( (i+1)*(i+1) );
+		v[i-1] = 1/(double)( (i+1)*(i+1) );
 	}
 }
 
@@ -31,7 +31,7 @@ void print_vec(int n, double *vec) {
 	
 	int i;
 	for ( i = 0; i < n; i++ ) {
-		printf("err[k = %d] = %f\n", i+3, vec[i]);
+		printf("err[k = %d] = \t %1.16f\n", i+3, vec[i]);
 	}
 }
 
