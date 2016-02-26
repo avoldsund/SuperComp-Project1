@@ -43,7 +43,7 @@ int main(int argc, char ** argv) {
 	end = omp_get_wtime();
 
 	printf("Error = %.10f\n", err);
-	printf("Elapsed time: %.10f\n", end-start-2.0);
+	printf("Elapsed time: %.10f\n", end-start);
 
 	return 0;
 

@@ -3,6 +3,7 @@
 #include <math.h>
 #include "mpi.h"
 #include <stdbool.h>
+#include <omp.h>
 
 bool isPowerOfTwo(unsigned int x) {
 
@@ -54,6 +55,7 @@ int main(int argc, char ** argv) {
 		v = calloc(n, sizeof(double));
 		
 		int i;
+		#pragma omp parallel for schedule(static)
 		for ( i = 0; i < n; i++ ) {
 			v[i] = 1 / (double)(i+1) / (double)(i+1);
 		}
@@ -62,6 +64,8 @@ int main(int argc, char ** argv) {
 			MPI_Send( &v[np*i], np, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
 		}
 		double S_n = 0.0;
+
+		#pragma omp parallel for schedule(static) reduction(+:S_n)
 		for ( i = 0; i < n; i++ ) {
 			S_n += v[i];
 		}
@@ -82,6 +86,7 @@ int main(int argc, char ** argv) {
 			v_n = calloc(np + n%P, sizeof(double));
 			MPI_Recv(v_n, np+n%P, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
 
+			#pragma omp parallel for schedule(static) reduction(+:S_n)
 			for ( i = 0; i < np + n%P; i++ ) {
 				S_n += v_n[i];
 			}
@@ -90,6 +95,7 @@ int main(int argc, char ** argv) {
 			v_n = calloc(np, sizeof(double));
 			MPI_Recv(v_n, np, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
 
+			#pragma omp parallel for schedule(static) reduction(+:S_n)
 			for ( i = 0; i < np; i++ ) {
 				S_n += v_n[i];
 			}
