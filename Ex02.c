@@ -7,7 +7,7 @@ void generate_v(int n, double *v) {
 
 	int i;	
 	for ( i = 0; i < n; i++ ) {
-		v[i] = 1/(double)( (i+1)* (i+1) );
+		v[i] = 1/ (i+1) / (i+1) ;
 	}
 }
 
@@ -16,7 +16,7 @@ double compute_S(int n, double *v){
 	double S = 0.0;
 	int i;
 
-	#pragma omp parallel for schedule(static) reduction(+:S)
+	//#pragma omp parallel for schedule(static) reduction(+:S)
 	for ( i = 0; i < n; i++ ) {
 		S += v[i];
 	}
@@ -33,19 +33,22 @@ void print_vec(int n, double *vec) {
 	
 	int i;
 	for ( i = 0; i < n; i++ ) {
-		printf("err[k = %d] = %f\n", i+3, vec[i]);
+		printf("err[k = %d] = %.16f\n", i+3, vec[i]);
 	}
 }
 
 
 int main() {
+
+	double start, end;
+	start = omp_get_wtime();
 	
 	int n, k;
-	int k_max = 15, k_min = 3;
+	//int k_max = 15, k_min = 3;
 
-	double err_vec[k_max - k_min];
+	//double err_vec[k_max - k_min];
 	
-	for ( k = k_min; k < k_max; k++ ) {
+	//for ( k = k_min; k < k_max; k++ ) {
 		
  		n = (int) pow(2, k);
 		
@@ -58,11 +61,13 @@ int main() {
 		free(v);
 
 		double err = compute_error(S_n);
-		err_vec[k-3] = err;
-	}
+		//err_vec[k-3] = err;
+	//}
+	end = omp_get_wtime();
 
-	print_vec(k_max - k_min, err_vec);
-
+	//print_vec(k_max - k_min, err_vec);
+	printf("Error = %.10f\n", err);
+	printf("Elapsed time: %.10f\n", end-start);
 
 	return 0;
 

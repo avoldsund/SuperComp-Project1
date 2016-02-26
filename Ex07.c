@@ -49,7 +49,6 @@ int main(int argc, char ** argv) {
 	}
 
 	double start = MPI_Wtime();
-	sleep(2);
 
 	int k = 14;
 	int n = (int) pow(2, k);
