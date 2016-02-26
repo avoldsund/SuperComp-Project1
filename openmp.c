@@ -15,7 +15,6 @@ int main(int argc, char ** argv) {
 
 	double start;
 	start = omp_get_wtime();
-	sleep(2);
 	
 	int k = atoi(argv[1]);	
 	int n = (int) pow(2, k);
@@ -30,7 +29,7 @@ int main(int argc, char ** argv) {
 	}
 
 	double S_n = 0.0;
-	//#pragma omp parallel for schedule(static) reduction(+:S_n)
+	#pragma omp parallel for schedule(static) reduction(+:S_n)
 	for ( i = 0; i < n; i++ ) {
 		S_n += v[i];
 	}
